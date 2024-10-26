@@ -10,6 +10,8 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from '@/components/ui/navigation-menu'
+
+import NewListDialog from './NewListDialog.vue'
 import { getLists } from '@/lib/collectableList'
 const components = getLists()
 </script>
@@ -19,7 +21,7 @@ const components = getLists()
     <NavigationMenuList>
       <NavigationMenuItem>
         <NavigationMenuTrigger
-          ><RouterLink to="/lists">
+          ><RouterLink to="/list">
             <NavigationMenuLink>Lists</NavigationMenuLink>
           </RouterLink>
         </NavigationMenuTrigger>
@@ -36,13 +38,13 @@ const components = getLists()
                 }}</NavigationMenuLink></RouterLink
               >
             </li>
+            <li style="padding: 1rem; text-align: left; text-wrap: nowrap">
+              <NavigationMenuLink>
+                <NewListDialog></NewListDialog>
+              </NavigationMenuLink>
+            </li>
           </ul>
         </NavigationMenuContent>
-      </NavigationMenuItem>
-      <NavigationMenuItem>
-        <RouterLink to="/">
-          <NavigationMenuLink>About</NavigationMenuLink>
-        </RouterLink>
       </NavigationMenuItem>
     </NavigationMenuList>
   </NavigationMenu>

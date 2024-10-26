@@ -8,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { RouterLink } from 'vue-router'
@@ -50,11 +49,6 @@ const logout = () => {
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        <RouterLink to="/profile" style="padding: 0">
-          <DropdownMenuItem>
-            <span>Profile</span>
-          </DropdownMenuItem>
-        </RouterLink>
         <RouterLink to="/settings" style="padding: 0">
           <DropdownMenuItem>
             <span>Settings</span>

@@ -144,6 +144,7 @@ export function getLists(): {
   return lists.map(list => ({
     id: list.id,
     name: list.name,
+    username: 'test',
     complete: list.items.filter(item => item.checked).length,
     total: list.items.length,
   }))
@@ -151,4 +152,8 @@ export function getLists(): {
 
 export function getList(id: number): CollectableList {
   return lists.find(list => list.id === id)!
+}
+
+export function getPublicLists(query: string) {
+  return getLists()
 }

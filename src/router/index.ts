@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import CollectableLists from '../views/CollectableLists.vue'
-import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
-import Profile from '../views/Profile.vue'
-import Settings from '../views/Settings.vue'
-import List from '../views/CollectableList.vue'
+import CollectableLists from '@/views/CollectableLists.vue'
+import Login from '@/views/Login.vue'
+import Register from '@/views/Register.vue'
+import Settings from '@/views/Settings.vue'
+import List from '@/views/CollectableList.vue'
+import ListSearch from '@/views/ListSearch.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,14 +26,15 @@ const router = createRouter({
       component: Register,
     },
     {
-      path: '/profile/:id?',
-      name: 'profile',
-      component: Profile,
-    },
-    {
       path: '/settings',
       name: 'settings',
       component: Settings,
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: ListSearch,
+      props: route => ({ query: route.query.query }),
     },
   ],
 })

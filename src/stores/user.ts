@@ -3,11 +3,11 @@ import { defineStore } from 'pinia'
 
 //https://jasonwatmore.com/post/2022/07/25/vue-3-pinia-user-registration-and-login-example-tutorial#users-store-js
 
-interface User {
+export interface User {
   id: number
   name: string
   password: string
-  email?: string
+  email: string
 }
 
 interface State {
@@ -19,7 +19,7 @@ export const useUsersStore = defineStore({
   id: 'users',
   state: (): State => ({
     users: [
-      { name: 'test', id: 1, password: 'test' },
+      { name: 'test', id: 1, password: 'test', email: 'test@example.com' },
       {
         name: 'shadcn',
         email: 'm@example.com',
