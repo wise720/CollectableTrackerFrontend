@@ -5,10 +5,16 @@ import Register from '@/views/Register.vue'
 import Settings from '@/views/Settings.vue'
 import List from '@/views/CollectableList.vue'
 import ListSearch from '@/views/ListSearch.vue'
+import Home from '@/views/Home.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+    },
     {
       path: '/list',
       name: 'lists',

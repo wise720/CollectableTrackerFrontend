@@ -18,7 +18,13 @@ const props = defineProps<{ query: string }>()
 const query = ref(props.query)
 
 const data = ref<
-  { id: number; name: string; complete: number; total: number }[]
+  {
+    id: number
+    name: string
+    complete: number
+    total: number
+    username: string
+  }[]
 >(getPublicLists(query.value))
 
 watch(query, () => {
@@ -43,7 +49,6 @@ const test = () => console.log('test')
         <TableRow>
           <TableHead class="w-[100px]"> User </TableHead>
           <TableHead class="w-[100px]"> Game </TableHead>
-
           <TableHead class="text-right"> Completion </TableHead>
         </TableRow>
       </TableHeader>

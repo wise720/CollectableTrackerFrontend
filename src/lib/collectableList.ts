@@ -140,6 +140,7 @@ export function getLists(): {
   name: string
   complete: number
   total: number
+  username: string
 }[] {
   return lists.map(list => ({
     id: list.id,

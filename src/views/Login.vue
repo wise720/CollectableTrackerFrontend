@@ -36,7 +36,7 @@ const login = () => {
         <Label for="username">Username</Label>
         <Input
           id="username"
-          placeholder="m@example.com"
+          placeholder="username"
           v-model="username"
           required
         />

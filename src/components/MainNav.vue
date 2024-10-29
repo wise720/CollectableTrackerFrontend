@@ -3,23 +3,33 @@ import { RouterLink } from 'vue-router'
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from '@/components/ui/navigation-menu'
 
 import NewListDialog from './NewListDialog.vue'
 import { getLists } from '@/lib/collectableList'
+import { useAuthStore } from '@/stores/auth'
+import { ref } from 'vue'
+
+const store = useAuthStore()
+store.$subscribe(state => {
+  console.log('state', state)
+  user.value = store.user
+})
+
+const user = ref(store.user)
+
 const components = getLists()
+console.log('user', user.value)
 </script>
 
 <template>
   <NavigationMenu>
     <NavigationMenuList>
-      <NavigationMenuItem>
+      <NavigationMenuItem v-if="user">
         <NavigationMenuTrigger
           ><RouterLink to="/list">
             <NavigationMenuLink>Lists</NavigationMenuLink>

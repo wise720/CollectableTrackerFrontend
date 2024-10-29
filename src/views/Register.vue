@@ -15,9 +15,10 @@ import { ref } from 'vue'
 
 const username = ref('')
 const password = ref('')
+const email = ref('')
 
-const login = () => {
-  console.log('logout')
+const register = () => {
+  console.log('register')
   useAuthStore().login(username.value, password.value)
 }
 </script>
@@ -42,7 +43,7 @@ const login = () => {
         <Input
           id="email"
           placeholder="user@domain.tld"
-          v-model="username"
+          v-model="email"
           required
         />
       </div>

@@ -34,6 +34,23 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table'
+
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer'
+
+import WikiItem from '@/components/WikiItem.vue'
+
+import { VisuallyHidden } from 'radix-vue'
+import { DrawerRoot } from 'vaul-vue'
+
 import { h, reactive, ref } from 'vue'
 
 import { getList, type Collectable } from '@/lib/collectableList'
@@ -74,6 +91,8 @@ const expanded = ref<ExpandedState>({})
 
 const data = reactive(getList(1).items)
 
+const game = ref('Warframe')
+
 const table = useVueTable({
   data,
   columns,
@@ -108,6 +127,9 @@ const table = useVueTable({
     },
   },
 })
+
+const wikiItemId = ref(-1)
+const openDrawer = ref(false)
 </script>
 
 <template>
@@ -161,7 +183,16 @@ const table = useVueTable({
         <TableBody>
           <template v-if="table.getRowModel().rows?.length">
             <template v-for="row in table.getRowModel().rows" :key="row.id">
-              <TableRow :data-state="row.getIsSelected() && 'selected'">
+              <TableRow
+                :data-state="row.getIsSelected() && 'selected'"
+                @click="
+                  () => {
+                    wikiItemId = row.original.id
+                    openDrawer = true
+                    console.log('openHelp', openDrawer)
+                  }
+                "
+              >
                 <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                   <FlexRender
                     :render="cell.column.columnDef.cell"
@@ -185,7 +216,19 @@ const table = useVueTable({
         </TableBody>
       </Table>
     </div>
-
+    <Drawer v-model:open="openDrawer">
+      <DrawerContent>
+        <VisuallyHidden>
+          <DrawerTitle>Help</DrawerTitle>
+          <DrawerDescription>
+            This is a drawer that contains help information.
+          </DrawerDescription>
+        </VisuallyHidden>
+        <div style="height: 70vh">
+          <WikiItem :item-id="wikiItemId" :game="game" />
+        </div>
+      </DrawerContent>
+    </Drawer>
     <div class="flex items-center justify-end space-x-2 py-4">
       <div class="flex-1 text-sm text-muted-foreground">
         {{ table.getFilteredSelectedRowModel().rows.length }} of
