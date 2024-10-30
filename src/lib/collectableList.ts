@@ -7,7 +7,7 @@ interface CollectableList {
 export interface Collectable {
   id: number
   name: string
-  description: string
+  tag: string
   checked: boolean
 }
 
@@ -17,120 +17,36 @@ const lists: CollectableList[] = [
     name: 'Warframe',
     items: [
       // random prime items foundrty from warframe
-      {
-        id: 1,
-        name: 'Ash Prime Blueprint',
-        description: 'Relict 9V',
-        checked: true,
-      },
-      {
-        id: 2,
-        name: 'Ash Prime Chassis',
-        description: 'Relict 9V',
-        checked: true,
-      },
-      {
-        id: 3,
-        name: 'Ash Prime Neuroptics',
-        description: 'Relict 9V',
-        checked: true,
-      },
-      {
-        id: 4,
-        name: 'Ash Prime Systems',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 5,
-        name: 'Banshee Prime Blueprint',
-        description: 'Relict 9V',
-        checked: true,
-      },
-      {
-        id: 6,
-        name: 'Banshee Prime Chassis',
-        description: 'Relict 9V',
-        checked: true,
-      },
-      {
-        id: 7,
-        name: 'Banshee Prime Neuroptics',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 8,
-        name: 'Banshee Prime Systems',
-        description: 'Relict 9V',
-        checked: true,
-      },
-      {
-        id: 9,
-        name: 'Ember Prime Blueprint',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 10,
-        name: 'Ember Prime Chassis',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 11,
-        name: 'Ember Prime Neuroptics',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 12,
-        name: 'Ember Prime Systems',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 13,
-        name: 'Frost Prime Blueprint',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 14,
-        name: 'Frost Prime Chassis',
-        description: 'Relict 9V',
-        checked: true,
-      },
-      {
-        id: 15,
-        name: 'Frost Prime Neuroptics',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 16,
-        name: 'Frost Prime Systems',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 17,
-        name: 'Hydroid Prime Blueprint',
-        description: 'Relict 9V',
-        checked: false,
-      },
-      {
-        id: 18,
-        name: 'Hydroid Prime Chassis',
-        description: 'Relict 9V',
-        checked: true,
-      },
-      {
-        id: 19,
-        name: 'Hydroid Prime Neuroptics',
-        description: 'Relict 9V',
-        checked: false,
-      },
+      {id: 1, name: "Ash Prime", checked: false, tag: "Warframe"},
+      {id: 2, name: "Banshee Prime", checked: false, tag: "Warframe"},
+      {id: 3, name: "Ember Prime", checked: true, tag: "Warframe"},
+      {id: 4, name: "Equinox Prime", checked: false, tag: "Warframe"},
+      {id: 5, name: "Frost Prime", checked: false, tag: "Warframe"},
+      {id: 6, name: "Hydroid Prime", checked: false, tag: "Warframe"},
+      {id: 7, name: "Inaros Prime", checked: true, tag: "Warframe"},
+      {id: 8, name: "Ivara Prime", checked: false, tag: "Warframe"},
+      {id: 9, name: "Limbo Prime", checked: false, tag: "Warframe"},
+      {id: 10, name: "Loki Prime", checked: true, tag: "Warframe"},
+      {id: 11, name: "Mag Prime", checked: false, tag: "Warframe"},
+      {id: 12, name: "Mesa Prime", checked: false, tag: "Warframe"},
+      {id: 13, name: "Mirage Prime", checked: false, tag: "Warframe"},
+      {id: 14, name: "Nekros Prime", checked: true, tag: "Warframe"},
+      {id: 15, name: "Nezha Prime", checked: false, tag: "Warframe"},
+      {id: 16, name: "Nidus Prime", checked: false, tag: "Warframe"},
+      {id: 17, name: "Nova Prime", checked: true, tag: "Warframe"},
+      {id: 18, name: "Nyx Prime", checked: false, tag: "Warframe"},
+      {id: 19, name: "Oberon Prime", checked: false, tag: "Warframe"},
+      {id: 20, name: "Octavia Prime", checked: false, tag: "Warframe"},
+      {id: 21, name: "Rhino Prime", checked: false, tag: "Warframe"},
+      {id: 22, name: "Saryn Prime", checked: false, tag: "Warframe"},
+      {id: 23, name: "Titania Prime", checked: false, tag: "Warframe"},
+      {id: 24, name: "Trinity Prime", checked: false, tag: "Warframe"},
+      {id: 25, name: "Valkyr Prime", checked: true, tag: "Warframe"},
+      {id: 26, name: "Vauban Prime", checked: false, tag: "Warframe"},
+      {id: 27, name: "Volt Prime", checked: false, tag: "Warframe"},
+      {id: 28, name: "Wukong Prime", checked: false, tag: "Warframe"},
+      {id: 29, name: "Zephyr Prime", checked: false, tag: "Warframe"},
+      {id: 30, name: "Akbronco Prime", checked: false, tag: "Pistol"},
     ],
   },
 ]

@@ -2,7 +2,9 @@
 import type {
   ColumnDef,
   ColumnFiltersState,
+  GlobalFiltersState,
   ExpandedState,
+  GlobalFilterTableState,
   SortingState,
   VisibilityState,
 } from '@tanstack/vue-table'
@@ -55,12 +57,21 @@ import { h, reactive, ref } from 'vue'
 
 import { getList, type Collectable } from '@/lib/collectableList'
 
+
 const columns: ColumnDef<Collectable>[] = [
   {
     accessorKey: 'name',
     header: () => h('div', { class: 'text-left' }, 'name'),
     cell: ({ row }) => {
       return h('div', { class: 'text-left font-medium' }, row.getValue('name'))
+    },
+
+  },
+  {
+    accessorKey: 'tag',
+    header: () => h('div', { class: 'text-left' }, 'tag'),
+    cell: ({ row }) => {
+      return h('div', { class: 'text-left font-medium' }, row.getValue('tag'))
     },
   },
   {
@@ -73,6 +84,7 @@ const columns: ColumnDef<Collectable>[] = [
         checked: item.checked,
         class: 'justify-center margin-auto text-right m-auto mr-6',
         'onUpdate:checked': value => (item.checked = value),
+        onClick: e => e.stopPropagation(),
       })
     },
     meta: {
@@ -84,7 +96,7 @@ const columns: ColumnDef<Collectable>[] = [
 ]
 
 const sorting = ref<SortingState>([])
-const columnFilters = ref<ColumnFiltersState>([])
+const globalFilter = ref<GlobalFiltersState>([])
 const columnVisibility = ref<VisibilityState>({})
 const rowSelection = ref({})
 const expanded = ref<ExpandedState>({})
@@ -102,8 +114,8 @@ const table = useVueTable({
   getFilteredRowModel: getFilteredRowModel(),
   getExpandedRowModel: getExpandedRowModel(),
   onSortingChange: updaterOrValue => valueUpdater(updaterOrValue, sorting),
-  onColumnFiltersChange: updaterOrValue =>
-    valueUpdater(updaterOrValue, columnFilters),
+  onGlobalFilterChange: updaterOrValue =>
+    valueUpdater(updaterOrValue, globalFilter),
   onColumnVisibilityChange: updaterOrValue =>
     valueUpdater(updaterOrValue, columnVisibility),
   onRowSelectionChange: updaterOrValue =>
@@ -113,8 +125,8 @@ const table = useVueTable({
     get sorting() {
       return sorting.value
     },
-    get columnFilters() {
-      return columnFilters.value
+    get globalFilter() {
+      return globalFilter.value
     },
     get columnVisibility() {
       return columnVisibility.value
@@ -130,6 +142,10 @@ const table = useVueTable({
 
 const wikiItemId = ref(-1)
 const openDrawer = ref(false)
+
+
+
+
 </script>
 
 <template>
@@ -138,8 +154,8 @@ const openDrawer = ref(false)
       <Input
         class="max-w-sm"
         placeholder="name"
-        :model-value="table.getColumn('name')?.getFilterValue() as string"
-        @update:model-value="table.getColumn('name')?.setFilterValue($event)"
+        :model-value="globalFilter[0]?.value"
+        @update:model-value="table.setGlobalFilter(String($event))"
       />
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
