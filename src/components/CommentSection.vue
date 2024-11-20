@@ -10,7 +10,6 @@ const props = defineProps<{
   game: string
 }>()
 
-import { TransitionGroup } from 'vue'
 import {
   FormField,
   FormItem,

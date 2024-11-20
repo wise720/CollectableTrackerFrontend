@@ -22,4 +22,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    cors: {
+      origin: '*', // Allows all origins
+      methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+      allowedHeaders: ['Content-Type'], // Allowed headers
+      credentials: true, // Allow credentials (cookies, HTTP authentication)
+    },
+  },
 })

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Input } from '@/components/ui/input'
 import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import {
   Table,
   TableBody,
@@ -64,3 +63,14 @@ const test = () => console.log('test')
     </Table>
   </div>
 </template>
+<style scoped>
+.Uncommon {
+  color: #b08d57;
+}
+.Rare {
+  color: #0000ff;
+}
+.Legendary {
+  color: #ff00ff;
+}
+</style>
