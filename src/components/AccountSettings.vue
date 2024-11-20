@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
-import type { User } from '@/stores/user'
+import type { User } from '@/stores/auth'
 
 const props = defineProps<{
   user: User
@@ -31,7 +31,7 @@ const accountSchema = toTypedSchema(
 const accountForm = useForm({
   validationSchema: accountSchema,
   initialValues: {
-    username: props.user.name,
+    username: props.user.username,
     email: props.user.email,
   },
 })

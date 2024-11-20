@@ -32,7 +32,7 @@ const hasLists = ref(true)
     <div v-else>
       <div style="margin-top: 5rem; font-size: xx-large">
         Welcome back
-        <div class="text-primary inline">{{ store.user.username }}</div>
+        <div class="text-primary inline">{{ store.user!.username }}</div>
       </div>
     </div>
   </div>

@@ -27,8 +27,11 @@ import { cn } from '@/lib/utils'
 import { Check, ChevronsUpDown } from 'lucide-vue-next'
 import { ref } from 'vue'
 import Label from './ui/label/Label.vue'
+import { useListStore } from '@/stores/list'
 
-const games = [{ value: 'warframe', label: 'Warframe' }]
+const myGames = useListStore().myGames
+const games = useListStore().games.filter(game => !myGames.includes(game))
+
 const open = ref(false)
 const value = ref('')
 const createList = () => {
@@ -54,9 +57,7 @@ const createList = () => {
               class="w-[200px] justify-between"
             >
               {{
-                value
-                  ? games.find(framework => framework.value === value)?.label
-                  : 'Select game...'
+                value ? games.find(game => game === value) : 'Select game...'
               }}
               <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -68,9 +69,9 @@ const createList = () => {
               <CommandList>
                 <CommandGroup>
                   <CommandItem
-                    v-for="framework in games"
-                    :key="framework.value"
-                    :value="framework.value"
+                    v-for="game in games"
+                    :key="game"
+                    :value="game"
                     @select="
                       ev => {
                         if (typeof ev.detail.value === 'string') {
@@ -80,14 +81,12 @@ const createList = () => {
                       }
                     "
                   >
-                    {{ framework.label }}
+                    {{ game }}
                     <Check
                       :class="
                         cn(
                           'ml-auto h-4 w-4',
-                          value === framework.value
-                            ? 'opacity-100'
-                            : 'opacity-0',
+                          value === game ? 'opacity-100' : 'opacity-0',
                         )
                       "
                     />

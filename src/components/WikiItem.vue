@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, defineProps, ref } from 'vue'
+import { defineAsyncComponent, ref } from 'vue'
 import CommentSection from '@/components/CommentSection.vue'
 
 const props = defineProps<{
