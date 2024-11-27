@@ -43,7 +43,7 @@ const test = () => console.log('test')
   </div>
   <div style="margin-top: 5rem; width: 80vw">
     <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
+      <TableCaption>public Collectable Lists</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead class="w-[100px]"> User </TableHead>
