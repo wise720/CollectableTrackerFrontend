@@ -1,14 +1,24 @@
 export interface CollectableList {
   id: number
-  name: string
-  items: Collectable[]
+  items: CollectableItem[]
+}
+
+export interface CollectableItem {
+  id: number
+  tag: string
+  checked: boolean
+  item: Collectable
 }
 
 export interface Collectable {
-  id: number
-  name: string
-  tag: string
-  checked: boolean
+  collectableId: number
+  itemId: string
+  game: string
+  itemType: string
+  itemName: string
+  itemDescription: string
+  itemIcon: string
+  componentData: string
 }
 
 const lists: CollectableList[] = [

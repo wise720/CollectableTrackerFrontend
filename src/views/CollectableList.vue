@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import type {
   ColumnDef,
   ColumnFiltersState,
@@ -55,23 +56,30 @@ import { DrawerRoot } from 'vaul-vue'
 
 import { h, reactive, ref } from 'vue'
 
-import { getList, type Collectable } from '@/lib/collectableList'
+import { type Collectable, type CollectableItem } from '@/lib/collectableList'
+import { useListStore } from '@/stores/list'
 
-
-const columns: ColumnDef<Collectable>[] = [
+const columns: ColumnDef<CollectableItem>[] = [
   {
-    accessorKey: 'name',
+    accessorKey: 'item',
     header: () => h('div', { class: 'text-left' }, 'name'),
     cell: ({ row }) => {
-      return h('div', { class: 'text-left font-medium' }, row.getValue('name'))
+      return h(
+        'div',
+        { class: 'text-left font-medium' },
+        (row.getValue('item') as Collectable).itemName,
+      )
     },
-
   },
   {
     accessorKey: 'tag',
     header: () => h('div', { class: 'text-left' }, 'tag'),
     cell: ({ row }) => {
-      return h('div', { class: 'text-left font-medium' }, row.getValue('tag'))
+      return h(
+        'div',
+        { class: 'text-left font-medium' },
+        (row.getValue('item') as Collectable).itemType,
+      )
     },
   },
   {
@@ -101,10 +109,13 @@ const columnVisibility = ref<VisibilityState>({})
 const rowSelection = ref({})
 const expanded = ref<ExpandedState>({})
 
-const data = reactive(getList(1).items)
+const game = ref<string>(useRouter().currentRoute.value.params.id as string)
 
-const game = ref('Warframe')
-
+const data = ref<CollectableItem[]>([])
+useListStore()
+  .getList(game.value)
+  .then(e => (data.value = e.items))
+data.value.map(e => ({ name: e.item.itemName, checked: e.checked }))
 const table = useVueTable({
   data,
   columns,
@@ -142,10 +153,6 @@ const table = useVueTable({
 
 const wikiItemId = ref(-1)
 const openDrawer = ref(false)
-
-
-
-
 </script>
 
 <template>

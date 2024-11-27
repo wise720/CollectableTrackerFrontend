@@ -9,7 +9,8 @@ console.log(API_URL)
 
 async function getAvailabeGames(): Promise<string[]> {
   const data = await fetch(API_URL + '/public/games')
-  return data.json()
+  const json: { name: string; version: string }[] = await data.json()
+  return json.map(e => e.name)
 }
 
 async function getMyGames(): Promise<string[]> {

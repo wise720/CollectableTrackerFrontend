@@ -28,14 +28,23 @@ import { Check, ChevronsUpDown } from 'lucide-vue-next'
 import { ref } from 'vue'
 import Label from './ui/label/Label.vue'
 import { useListStore } from '@/stores/list'
+import api from '@/lib/api'
+import router from '@/router'
 
-const myGames = useListStore().myGames
-const games = useListStore().games.filter(game => !myGames.includes(game))
+const myGames = ref<string[]>([])
+useListStore()
+  .getMyGames()
+  .then(e => (myGames.value = e))
+const games = useListStore().games.filter(
+  game => !(myGames.value ?? []).includes(game),
+)
 
 const open = ref(false)
 const value = ref('')
-const createList = () => {
-  console.log('create list: ' + value.value)
+const createList = async () => {
+  await api.lists.addList(value.value)
+  router.push('/list/' + value.value)
+  open.value = false
 }
 </script>
 <template>

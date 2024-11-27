@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { getLists } from '@/lib/collectableList'
 import {
   Table,
   TableCaption,
@@ -9,8 +8,22 @@ import {
   TableCell,
 } from '@/components/ui/table'
 import router from '@/router'
-
-const lists = getLists()
+import { useListStore } from '@/stores/list'
+import { ref } from 'vue'
+const lists = ref<
+  { name: string; id: string; complete: number; total: number }[]
+>([])
+useListStore()
+  .getMyGames()
+  .then(
+    e =>
+      (lists.value = e.map(el => ({
+        name: el,
+        id: '',
+        complete: 0,
+        total: 100,
+      }))),
+  )
 </script>
 
 <template>

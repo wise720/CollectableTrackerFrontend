@@ -26,6 +26,6 @@ export function authHeader() {
   if (isLoggedIn) {
     return { Authorization: `Bearer ${user.token}` }
   } else {
-    return {} as { [key: string]: string }
+    throw new Error('Unauth')
   }
 }

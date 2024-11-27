@@ -22,7 +22,10 @@ store.$subscribe(state => {
 
 const user = ref(store.user)
 
-const myGames = useListStore().myGames
+const myGames = ref<string[]>([])
+useListStore()
+  .getMyGames()
+  .then(e => (myGames.value = e))
 </script>
 
 <template>

@@ -7,7 +7,7 @@ export const useListStore = defineStore({
   state: () => {
     const data = {
       games: [] as string[],
-      myGames: [] as string[],
+      myGames: null as string[] | null,
       list: {} as CollectableList | null,
       readOnlyList: {} as CollectableList | null,
     }
@@ -19,22 +19,25 @@ export const useListStore = defineStore({
   },
   actions: {
     async authInit() {
-      this.myGames = await api.lists.getMyGames()
+      this.getMyGames()
     },
     addList(game: string) {
-      this.myGames.push(game)
+      this.myGames?.push(game)
       api.lists.addList(game)
     },
     async getMyGames() {
-      if (!this.myGames.length) return []
+      if (this.myGames != null) return this.myGames
+
       this.myGames = await api.lists.getMyGames()
       return this.myGames
     },
     async getList(game: string) {
       this.list = await api.lists.getList(game)
+      return this.list
     },
     async getListById(userid: string, id: number) {
       this.readOnlyList = await api.getListById(userid, id)
+      return this.readOnlyList
     },
   },
 })
