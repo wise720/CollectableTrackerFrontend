@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getPublicLists } from '@/lib/collectableList'
 
 const props = defineProps<{ query: string }>()
 
@@ -24,10 +23,10 @@ const data = ref<
     total: number
     username: string
   }[]
->(getPublicLists(query.value))
+>([]) //getPublicLists(query.value))
 
 watch(query, () => {
-  data.value = getPublicLists(query.value)
+  data.value = [] //getPublicLists(query.value)
 })
 
 const test = () => console.log('test')

@@ -23,9 +23,8 @@ store.$subscribe(state => {
 const user = ref(store.user)
 
 const myGames = ref<string[]>([])
-useListStore()
-  .getMyGames()
-  .then(e => (myGames.value = e))
+const listStore = useListStore()
+listStore.$subscribe(state=> myGames.value = listStore.myGames || [])
 </script>
 
 <template>

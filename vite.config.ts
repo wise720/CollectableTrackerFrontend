@@ -16,6 +16,7 @@ export default defineConfig({
       plugins: [tailwind(), autoprefixer()],
     },
   },
+
   plugins: [vue(), vueJsx(), nightwatchPlugin(), vueDevTools()],
   resolve: {
     alias: {
@@ -29,5 +30,6 @@ export default defineConfig({
       allowedHeaders: ['Content-Type'], // Allowed headers
       credentials: true, // Allow credentials (cookies, HTTP authentication)
     },
+    port: 3001,
   },
 })
