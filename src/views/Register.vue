@@ -9,8 +9,8 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import api from '@/lib/api'
 
-import { useAuthStore } from '@/stores/auth'
 import { ref } from 'vue'
 
 const username = ref('')
@@ -19,7 +19,7 @@ const email = ref('')
 
 const register = () => {
   console.log('register')
-  useAuthStore().login(username.value, password.value)
+  api.auth.register(username.value, password.value, email.value)
 }
 </script>
 
@@ -53,7 +53,7 @@ const register = () => {
       </div>
     </CardContent>
     <CardFooter>
-      <Button class="w-full" @click="login"> Sign up </Button>
+      <Button class="w-full" @click="register"> Sign up </Button>
     </CardFooter>
   </Card>
 </template>

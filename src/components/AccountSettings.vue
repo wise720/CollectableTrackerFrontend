@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 import type { User } from '@/stores/auth'
+import api from '@/lib/api'
 
 const props = defineProps<{
   user: User
@@ -37,7 +38,12 @@ const accountForm = useForm({
 })
 
 const onAccSubmit = accountForm.handleSubmit(values => {
-  console.log('Form submitted!', values)
+  api.auth.update({
+    oldPassword: undefined,
+    newPassword: undefined,
+    name: values.username,
+    email: values.email,
+  })
 })
 </script>
 <template>

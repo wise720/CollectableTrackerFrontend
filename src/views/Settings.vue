@@ -14,14 +14,23 @@ import {
   TableHead,
   TableRow,
 } from '@/components/ui/table'
+
 import { useListStore } from '@/stores/list'
+import type { Game } from '@/lib/api'
+import { ref } from 'vue'
 import api from '@/lib/api'
 
 const user = useAuthStore().user
-const lists = (await api.public.getPublicLists()).map(list => ({
-  ...list,
-  public: false,
-}))
+const listsStore = useListStore()
+listsStore.$subscribe(() => {
+  lists.value = listsStore.myGames || []
+})
+const lists = ref<Game[]>([])
+
+const publish = async (game: Game, publish: boolean) => {
+  api.lists.setListPublic(game.name, publish)
+  game.public = publish
+}
 </script>
 <template>
   <div style="width: 50vw">
@@ -42,7 +51,11 @@ const lists = (await api.public.getPublicLists()).map(list => ({
         <TableRow v-for="(list, i) in lists" v-bind:key="i">
           <TableCell>{{ list.name }}</TableCell>
           <TableCell
-            ><Checkbox v-model="list.public" label="Public"></Checkbox
+            ><Checkbox
+              v-model="list.public"
+              v-on:update:checked="publish(list, $event)"
+              label="Public"
+            ></Checkbox
           ></TableCell>
         </TableRow>
       </TableBody>

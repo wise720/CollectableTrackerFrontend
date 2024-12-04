@@ -28,21 +28,23 @@ import { Check, ChevronsUpDown } from 'lucide-vue-next'
 import { ref } from 'vue'
 import Label from './ui/label/Label.vue'
 import { useListStore } from '@/stores/list'
-import api from '@/lib/api'
+import api, { type Game } from '@/lib/api'
 import router from '@/router'
 
-const myGames = ref<string[]>([])
+const myGames = ref<Game[]>([])
 useListStore()
   .getMyGames()
   .then(e => (myGames.value = e))
 const games = useListStore().games.filter(
-  game => !(myGames.value ?? []).includes(game),
+  game => !(myGames.value ?? []).map(e => e.name).includes(game),
 )
 
 const open = ref(false)
 const value = ref('')
 const createList = async () => {
   await api.lists.addList(value.value)
+  console.log('createList', value.value)
+
   router.push('/list/' + value.value)
   open.value = false
 }
@@ -57,7 +59,7 @@ const createList = async () => {
       </DialogHeader>
       <div>
         <Label style="margin-right: 2rem">Game</Label>
-        <Popover v-model:open="open">
+        <Popover>
           <PopoverTrigger as-child>
             <Button
               variant="outline"
@@ -86,7 +88,6 @@ const createList = async () => {
                         if (typeof ev.detail.value === 'string') {
                           value = ev.detail.value
                         }
-                        open = false
                       }
                     "
                   >

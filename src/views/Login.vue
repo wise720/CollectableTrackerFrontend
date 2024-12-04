@@ -16,10 +16,15 @@ import { ref } from 'vue'
 
 const username = ref('')
 const password = ref('')
-
-const login = () => {
+const error = ref('')
+const login = async () => {
   console.log('logout')
-  useAuthStore().login(username.value, password.value)
+  try {
+    await useAuthStore().login(username.value, password.value)
+  } catch (e) {
+    console.log(e)
+    error.value = (e as string) || 'An error occurred'
+  }
 }
 </script>
 
@@ -44,6 +49,9 @@ const login = () => {
       <div class="grid gap-2">
         <Label for="password">Password</Label>
         <Input id="password" type="password" required v-model="password" />
+      </div>
+      <div class="text-sm text-red-800 dark:text-red-400" v-if="error">
+        {{ error }}
       </div>
     </CardContent>
     <CardFooter>

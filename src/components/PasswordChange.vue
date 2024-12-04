@@ -11,6 +11,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
+import api from '@/lib/api'
+import { ref } from 'vue'
 
 const passwordSchema = toTypedSchema(
   z.object({
@@ -23,8 +25,19 @@ const passwordForm = useForm({
   validationSchema: passwordSchema,
 })
 
+const error = ref('')
+
 const onPasswordSubmit = passwordForm.handleSubmit(values => {
-  console.log('Form submitted!', values)
+  api.auth
+    .update({
+      oldPassword: values.oldPassword,
+      newPassword: values.newPassword,
+      name: undefined,
+      email: undefined,
+    })
+    .catch(e => {
+      error.value = (e as string) || 'An error occurred'
+    })
 })
 </script>
 <template>
@@ -55,6 +68,9 @@ const onPasswordSubmit = passwordForm.handleSubmit(values => {
         <FormMessage />
       </FormItem>
     </FormField>
+    <div v-if="error" class="text-sm text-red-800 dark:text-red-400">
+      {{ error }}
+    </div>
     <Button type="submit">Update Pasword</Button>
   </form>
 </template>

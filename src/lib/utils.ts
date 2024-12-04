@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge'
 import type { Updater } from '@tanstack/vue-table'
 import type { Ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import router from '@/router'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -28,4 +29,21 @@ export function authHeader() {
   } else {
     throw new Error('Unauth')
   }
+}
+
+export async function authFetch(url: string, options: RequestInit) {
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      ...authHeader(),
+    },
+  })
+  if (res.status == 401) {
+    router.push('/login')
+  }
+  if (!res.ok) {
+    throw new Error('Fetch failed')
+  }
+  return res
 }

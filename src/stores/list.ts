@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import api from '@/lib/api'
+import api, { type Game } from '@/lib/api'
 import type { CollectableList } from '@/lib/collectableList'
 
 export const useListStore = defineStore({
@@ -7,7 +7,7 @@ export const useListStore = defineStore({
   state: () => {
     const data = {
       games: [] as string[],
-      myGames: null as string[] | null,
+      myGames: null as Game[] | null,
       list: {} as CollectableList | null,
       readOnlyList: {} as CollectableList | null,
     }
@@ -21,9 +21,9 @@ export const useListStore = defineStore({
     async authInit() {
       this.getMyGames()
     },
-    addList(game: string) {
-      this.myGames?.push(game)
+    async addList(game: string) {
       api.lists.addList(game)
+      this.myGames = await api.lists.getMyGames()
     },
     async getMyGames() {
       if (this.myGames != null) return this.myGames

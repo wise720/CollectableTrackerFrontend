@@ -22,16 +22,18 @@ export const useAuthStore = defineStore({
   actions: {
     async login(username: string, password: string) {
       const user = await api.auth.login(username, password)
-      if (!user) {
-        return Promise.reject('Username or password is incorrect')
-      }
-      // update pinia state
-      this.user = user
+      console.log('login', user)
+      if ('msg' in user) {
+        return Promise.reject(user.msg)
+      } else {
+        // update pinia state
+        this.user = user
 
-      // store user details and jwt in local storage to keep user logged in between page refreshes
-      localStorage.setItem('user', JSON.stringify(user))
-      useListStore().authInit()
-      router.push('/')
+        // store user details and jwt in local storage to keep user logged in between page refreshes
+        localStorage.setItem('user', JSON.stringify(user))
+        useListStore().authInit()
+        router.push('/')
+      }
     },
     logout() {
       api.auth.logout()

@@ -7,13 +7,20 @@ const API_URL = import.meta.env.VITE_API_URL || ''
 
 console.log(API_URL)
 
+export interface Game {
+  name: string
+  amount: number
+  total: number
+  public: boolean
+}
+
 async function getAvailabeGames(): Promise<string[]> {
   const data = await fetch(API_URL + '/public/games')
   const json: { name: string; version: string }[] = await data.json()
   return json.map(e => e.name)
 }
 
-async function getMyGames(): Promise<string[]> {
+async function getMyGames(): Promise<Game[]> {
   const data = await fetch(API_URL + '/lists/games', { headers: authHeader() })
   return data.json()
 }
