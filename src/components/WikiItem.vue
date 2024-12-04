@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from 'vue'
 import CommentSection from '@/components/CommentSection.vue'
+import { loadModule } from 'vue3-sfc-loader'
 
 const props = defineProps<{
   itemId: number
   game: string
 }>()
+
+const pluginPath = import.meta.env.VITE_PLUGINS_PATH
+console.log(import.meta.env.VITE_PLUGINS_PATH)
 
 const requestData = async (itemId, game) => {
   return {
@@ -61,15 +65,18 @@ requestData(props.itemId, props.game).then(res => {
   data.value = res
 })
 
-const Comp = defineAsyncComponent(
-  () => import(`@/components/games/wiki/${props.game}.vue`),
+const c = defineAsyncComponent(() =>
+  import(`../plugins/${props.game}/${props.game}.es.js`).then(e => {
+    import(`../plugins/${props.game}/plugin.css`)
+    return e.default
+  }),
 )
 </script>
 <template>
-  <Comp v-if="!data.loading" :itemId="props.itemId" :data="data">
+  <c v-if="!data.loading" :itemId="props.itemId" :data="data">
     <template v-slot:comments>
       <CommentSection :game="props.game" :itemId="props.itemId">
       </CommentSection>
     </template>
-  </Comp>
+  </c>
 </template>

@@ -49,6 +49,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 
+console.log('CollectableList.vue')
 import WikiItem from '@/components/WikiItem.vue'
 
 import { VisuallyHidden } from 'radix-vue'

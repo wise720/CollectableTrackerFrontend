@@ -8,6 +8,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 import tailwind from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
+import dynamicImportVars from '@rollup/plugin-dynamic-import-vars'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -30,6 +31,12 @@ export default defineConfig({
       allowedHeaders: ['Content-Type'], // Allowed headers
       credentials: true, // Allow credentials (cookies, HTTP authentication)
     },
+    hmr: true, // Ensure HMR is enabled
     port: 3001,
+  },
+  build: {
+    rollupOptions: {
+      plugins: [dynamicImportVars({})],
+    },
   },
 })

@@ -9,7 +9,6 @@ import {
   TableCell,
 } from '@/components/ui/table'
 
-import CommentSection from '@/components/CommentSection.vue'
 import { VisuallyHidden } from 'radix-vue'
 const props = defineProps<{
   itemId: number
