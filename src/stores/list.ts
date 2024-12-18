@@ -1,13 +1,16 @@
 import { defineStore } from 'pinia'
-import api, { type Game } from '@/lib/api'
-import type { CollectableList } from '@/lib/collectableList'
+import api from '@/lib/api'
+import { ref } from 'vue'
+import type {
+  CollectableList,
+  CollectableListDescriptor,
+} from '@/types/collectableList'
 
-export const useListStore = defineStore({
-  id: 'tracker',
+export const useListStore = defineStore('tracker', {
   state: () => {
     const data = {
       games: [] as string[],
-      myGames: null as Game[] | null,
+      myGames: ref<CollectableListDescriptor[] | null>(null),
       list: {} as CollectableList | null,
       readOnlyList: {} as CollectableList | null,
     }
@@ -22,20 +25,20 @@ export const useListStore = defineStore({
       this.getMyGames()
     },
     async addList(game: string) {
-      api.lists.addList(game)
-      this.myGames = await api.lists.getMyGames()
+      await api.lists.addList(game)
+      this.getMyGames()
     },
     async getMyGames() {
-      if (this.myGames != null) return this.myGames
-
       this.myGames = await api.lists.getMyGames()
       return this.myGames
     },
     async getList(game: string) {
+      if (this.list?.game === game) return this.list
       this.list = await api.lists.getList(game)
       return this.list
     },
     async getListById(userid: string, id: number) {
+      if (this.readOnlyList?.id === id) return this.readOnlyList
       this.readOnlyList = await api.getListById(userid, id)
       return this.readOnlyList
     },
