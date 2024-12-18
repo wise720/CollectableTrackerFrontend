@@ -16,20 +16,15 @@ import {
 } from '@/components/ui/table'
 
 import { useListStore } from '@/stores/list'
-import type { Game } from '@/lib/api'
-import { ref } from 'vue'
 import api from '@/lib/api'
+import type { CollectableListDescriptor } from '@/types/collectableList'
 
 const user = useAuthStore().user
 const listsStore = useListStore()
-listsStore.$subscribe(() => {
-  lists.value = listsStore.myGames || []
-})
-const lists = ref<Game[]>([])
 
-const publish = async (game: Game, publish: boolean) => {
-  api.lists.setListPublic(game.name, publish)
-  game.public = publish
+const publish = async (list: CollectableListDescriptor, publish: boolean) => {
+  api.lists.setListPublic(list.game, publish)
+  list.public = publish
 }
 </script>
 <template>
@@ -48,8 +43,8 @@ const publish = async (game: Game, publish: boolean) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(list, i) in lists" v-bind:key="i">
-          <TableCell>{{ list.name }}</TableCell>
+        <TableRow v-for="(list, i) in listsStore.myGames" v-bind:key="i">
+          <TableCell>{{ list.game }}</TableCell>
           <TableCell
             ><Checkbox
               v-model="list.public"
@@ -58,6 +53,9 @@ const publish = async (game: Game, publish: boolean) => {
             ></Checkbox
           ></TableCell>
         </TableRow>
+        <TableBody v-if="(listsStore.myGames ?? []).length === 0">
+          <TableCell>No lists found</TableCell>
+        </TableBody>
       </TableBody>
     </Table>
   </div>
