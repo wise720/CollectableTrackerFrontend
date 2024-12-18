@@ -31,19 +31,20 @@ export function authHeader() {
   }
 }
 
-export async function authFetch(url: string, options: RequestInit) {
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      ...authHeader(),
-    },
-  })
-  if (res.status == 401) {
+export async function authFetch(url: string, options?: RequestInit) {
+  if (!options) {
+    options = {}
+  }
+  try {
+    return await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        ...authHeader(),
+      },
+    })
+  } catch {
+    useAuthStore().logout()
     router.push('/login')
   }
-  if (!res.ok) {
-    throw new Error('Fetch failed')
-  }
-  return res
 }
