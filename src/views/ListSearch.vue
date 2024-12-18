@@ -10,26 +10,27 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import api from '@/lib/api'
+import type { CollectableListDescriptor } from '@/types/collectableList'
+import router from '@/router'
 
 const props = defineProps<{ query: string }>()
 
 const query = ref(props.query)
 
-const data = ref<
-  {
-    id: number
-    name: string
-    complete: number
-    total: number
-    username: string
-  }[]
->([]) //getPublicLists(query.value))
+const data = ref<CollectableListDescriptor[]>([]) //getPublicLists(query.value))
+
+api.public.getPublicLists().then(res => {
+  data.value = res
+  console.log(res)
+})
 
 watch(query, () => {
   data.value = [] //getPublicLists(query.value)
 })
 
-const test = () => console.log('test')
+const openList = (userid: string, listId: number) =>
+  router.push(`/users/${userid}/list/${listId}`)
 </script>
 <template>
   <div>
@@ -51,9 +52,13 @@ const test = () => console.log('test')
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow @click="test" v-for="row in data" :key="row.id">
+        <TableRow
+          v-for="row in data"
+          :key="row.id"
+          @click="openList(row.userId!, row.id)"
+        >
           <TableCell class="font-medium">{{ row.username }} </TableCell>
-          <TableCell class="font-medium">{{ row.name }} </TableCell>
+          <TableCell class="font-medium">{{ row.game }} </TableCell>
           <TableCell class="text-right"
             >{{ ((row.complete * 100) / row.total).toFixed(2) }}%
           </TableCell>
