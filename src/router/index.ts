@@ -20,7 +20,7 @@ const router = createRouter({
       name: 'lists',
       component: CollectableLists,
     },
-    { path: '/list/:id/', name: 'list', component: List },
+    { path: '/list/:id/', name: 'list', component: List, props: true },
     {
       path: '/login',
       name: 'login',
@@ -41,6 +41,12 @@ const router = createRouter({
       name: 'search',
       component: ListSearch,
       props: route => ({ query: route.query.query }),
+    },
+    {
+      path: '/users/:userId/list/:listId/',
+      name: 'publicList',
+      component: List,
+      props: true,
     },
   ],
 })

@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import type {
-  ColumnDef,
-  ColumnFiltersState,
-  GlobalFiltersState,
-  ExpandedState,
-  GlobalFilterTableState,
-  SortingState,
-  VisibilityState,
-} from '@tanstack/vue-table'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { valueUpdater } from '@/lib/utils'
+import type {
+  ColumnDef,
+  ExpandedState,
+  GlobalFiltersState,
+  SortingState,
+  VisibilityState,
+} from '@tanstack/vue-table'
 
 import {
   DropdownMenu,
@@ -21,12 +18,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import {
-  Table,
   TableBody,
   TableCell,
-  TableHead,
-  TableHeader,
   TableRow,
+  TableHead,
+  Table,
+  TableHeader,
 } from '@/components/ui/table'
 import {
   FlexRender,
@@ -40,25 +37,46 @@ import {
 
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from '@/components/ui/drawer'
-
-console.log('CollectableList.vue')
 import WikiItem from '@/components/WikiItem.vue'
 
+console.log('CollectableList.vue')
+
 import { VisuallyHidden } from 'radix-vue'
-import { DrawerRoot } from 'vaul-vue'
 
-import { h, reactive, ref } from 'vue'
+import { h, ref } from 'vue'
 
-import { type Collectable, type CollectableItem } from '@/lib/collectableList'
+import api from '@/lib/api'
 import { useListStore } from '@/stores/list'
+import { type Collectable, type CollectableItem } from '@/types/collectableList'
+
+const props = defineProps<{
+  id: string | null
+  userId: string | null
+  listId: number | null
+}>()
+
+const readOnly = ref(false)
+const game = ref('')
+const data = ref<CollectableItem[]>([])
+if (props.id) {
+  useListStore()
+    .getList(props.id)
+    .then(e => (data.value = e.items))
+  game.value = props.id
+} else {
+  api.getListById(props.userId!, props.listId!).then(e => {
+    data.value = e.items
+    game.value = e.game
+  })
+  readOnly.value = true
+}
+
+const updateCollectStatus = (id: number, state: boolean) =>
+  api.lists.updateCollectStatus(props.id!, id, state)
 
 const columns: ColumnDef<CollectableItem>[] = [
   {
@@ -90,10 +108,15 @@ const columns: ColumnDef<CollectableItem>[] = [
       const item = row.original
 
       return h(Checkbox, {
-        checked: item.checked,
+        checked: item.collected,
         class: 'justify-center margin-auto text-right m-auto mr-6',
-        'onUpdate:checked': value => (item.checked = value),
-        onClick: e => e.stopPropagation(),
+        disabled: readOnly.value,
+        'onUpdate:checked': value => (item.collected = value),
+        onClick: e => {
+          item.collected = !item.collected
+          updateCollectStatus(item.id, item.collected)
+          e.stopPropagation()
+        },
       })
     },
     meta: {
@@ -110,13 +133,6 @@ const columnVisibility = ref<VisibilityState>({})
 const rowSelection = ref({})
 const expanded = ref<ExpandedState>({})
 
-const game = ref<string>(useRouter().currentRoute.value.params.id as string)
-
-const data = ref<CollectableItem[]>([])
-useListStore()
-  .getList(game.value)
-  .then(e => (data.value = e.items))
-data.value.map(e => ({ name: e.item.itemName, checked: e.checked }))
 const table = useVueTable({
   data,
   columns,
@@ -152,7 +168,7 @@ const table = useVueTable({
   },
 })
 
-const wikiItemId = ref(-1)
+const collectableId = ref(-1)
 const openDrawer = ref(false)
 </script>
 
@@ -211,7 +227,8 @@ const openDrawer = ref(false)
                 :data-state="row.getIsSelected() && 'selected'"
                 @click="
                   () => {
-                    wikiItemId = row.original.id
+                    if (readOnly) return
+                    collectableId = row.original.item.collectableId
                     openDrawer = true
                     console.log('openHelp', openDrawer)
                   }
@@ -249,7 +266,7 @@ const openDrawer = ref(false)
           </DrawerDescription>
         </VisuallyHidden>
         <div style="height: 70vh">
-          <WikiItem :item-id="wikiItemId" :game="game" />
+          <WikiItem :collectable-id="collectableId" :game="game" />
         </div>
       </DrawerContent>
     </Drawer>
