@@ -2,18 +2,11 @@ import { defineStore } from 'pinia'
 import router from '@/router'
 import api from '@/lib/api'
 import { useListStore } from './list'
+import type { User } from '@/types/user'
 
 //https://jasonwatmore.com/post/2022/07/25/vue-3-pinia-user-registration-and-login-example-tutorial#users-store-js
 
-export interface User {
-  id: number
-  username: string
-  email: string
-  token?: string
-}
-
-export const useAuthStore = defineStore({
-  id: 'auth',
+export const useAuthStore = defineStore('auth', {
   state: () => ({
     // initialize state from local storage to enable user to stay logged in
     user: JSON.parse(localStorage.getItem('user') ?? 'null') as User | null,
@@ -43,7 +36,7 @@ export const useAuthStore = defineStore({
     },
     async update(params: {
       oldPassword: string | undefined
-      password: string | undefined
+      newPassword: string | undefined
       name: string | undefined
       email: string | undefined
     }) {
@@ -55,7 +48,7 @@ export const useAuthStore = defineStore({
       this.setUser({
         ...user,
         ...params,
-        name: params.name ?? user.name,
+        username: params.name ?? user.username,
         email: params.email ?? user.email,
       })
     },
