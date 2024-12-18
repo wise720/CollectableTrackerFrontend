@@ -9,21 +9,6 @@ import {
 } from '@/components/ui/table'
 import router from '@/router'
 import { useListStore } from '@/stores/list'
-import { ref } from 'vue'
-const lists = ref<
-  { name: string; id: string; complete: number; total: number }[]
->([])
-useListStore()
-  .getMyGames()
-  .then(
-    e =>
-      (lists.value = e.map(el => ({
-        name: el,
-        id: '',
-        complete: 0,
-        total: 100,
-      }))),
-  )
 </script>
 
 <template>
@@ -37,16 +22,16 @@ useListStore()
         </TableRow>
 
         <TableRow
-          @click="router.push('/list/' + list.name)"
-          v-for="list in lists"
+          v-for="list in useListStore().myGames"
+          @click="router.push('/list/' + list.game)"
           :key="list.id"
           style="text-wrap: nowrap"
         >
           <TableCell>
-            {{ list.name }}
+            {{ list.game }}
           </TableCell>
-          <TableCell class="text-right"
-            >{{ list.complete }}/{{ list.total }}</TableCell
+          <TableCell class="text-right">
+            {{ list.complete }}/{{ list.total }}</TableCell
           >
         </TableRow>
       </TableHeader>
