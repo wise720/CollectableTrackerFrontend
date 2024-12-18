@@ -11,8 +11,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
-import api from '@/lib/api'
 import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 const passwordSchema = toTypedSchema(
   z.object({
@@ -28,7 +28,7 @@ const passwordForm = useForm({
 const error = ref('')
 
 const onPasswordSubmit = passwordForm.handleSubmit(values => {
-  api.auth
+  useAuthStore()
     .update({
       oldPassword: values.oldPassword,
       newPassword: values.newPassword,
