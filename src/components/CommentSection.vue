@@ -6,8 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 import * as z from 'zod'
 const props = defineProps<{
-  itemId: number
-  game: string
+  collectableId: number
 }>()
 
 import {
@@ -24,8 +23,16 @@ import { useAuthStore } from '@/stores/auth'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { VisuallyHidden } from 'radix-vue'
+import { useItemStore } from '@/stores/comment'
 
-const getComments = async (itemId, game) => {
+useItemStore()
+  .getComments(props.collectableId)
+  .then(res => {
+    data.loading = false
+    data.comments = res
+  })
+
+const getComments = async collectableId => {
   return [
     {
       id: 1,

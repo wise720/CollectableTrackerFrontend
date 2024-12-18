@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from 'vue'
 import CommentSection from '@/components/CommentSection.vue'
-import { loadModule } from 'vue3-sfc-loader'
+import { useItemStore } from '@/stores/comment'
 
 const props = defineProps<{
-  itemId: number
+  collectableId: number
   game: string
 }>()
 
@@ -61,7 +61,7 @@ const requestData = async (itemId, game) => {
 }
 
 const data = ref({ loading: true })
-requestData(props.itemId, props.game).then(res => {
+requestData(props.collectableId).then(res => {
   data.value = res
 })
 
@@ -71,12 +71,22 @@ const c = defineAsyncComponent(() =>
     return e.default
   }),
 )
+const itemStore = useItemStore()
+
+itemStore.getComments(props.collectableId)
+itemStore.getItem(props.collectableId)
 </script>
 <template>
-  <c v-if="!data.loading" :itemId="props.itemId" :data="data">
+  <c
+    v-if="!data.loading"
+    :itemId="props.collectableId"
+    :data="itemStore.customData"
+    :description="itemStore.description"
+    :icon="itemStore.icon"
+    :name="itemStore.name"
+  >
     <template v-slot:comments>
-      <CommentSection :game="props.game" :itemId="props.itemId">
-      </CommentSection>
+      <CommentSection :collectableId="props.collectableId"> </CommentSection>
     </template>
   </c>
 </template>
