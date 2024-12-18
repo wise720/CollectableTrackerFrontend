@@ -48,7 +48,7 @@ export async function register(
       throw new Error('Registration failed')
     }
     return await response.json()
-  } catch (error) {
+  } catch {
     throw new Error('Registration failed')
   }
 }
@@ -59,38 +59,26 @@ export async function update(update: {
   name: string | undefined
   email: string | undefined
 }) {
-  try {
-    const k = Object.entries(update).filter(
-      k => k[1] !== undefined,
-    ) as string[][]
-    const queryParams = new URLSearchParams(k).toString()
-    const response = await authFetch(`${API_URL}/auth/update?${queryParams}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    if (!response.ok) {
-      throw new Error('Update failed')
-    }
-    return await response.json()
-  } catch (error) {
-    throw new Error('Update failed')
-  }
+  const k = Object.entries(update).filter(k => k[1] !== undefined) as string[][]
+  const queryParams = new URLSearchParams(k).toString()
+  const response = await authFetch(`${API_URL}/auth/update?${queryParams}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  return await response!.json()
 }
 
 export async function logout() {
-  try {
-    const response = await authFetch(`${API_URL}/auth/logout`, {
-      method: 'POST',
-    })
-    if (!response.ok) {
-      throw new Error('Logout failed')
-    }
-    return await response.json()
-  } catch (error) {
+  const response = await authFetch(`${API_URL}/auth/logout`, {
+    method: 'POST',
+  })
+  if (!response!.ok) {
     throw new Error('Logout failed')
   }
+  return await response!.json()
 }
 
 export async function refresh(refreshToken: string) {
@@ -102,11 +90,11 @@ export async function refresh(refreshToken: string) {
       },
       body: JSON.stringify({ refreshToken }),
     })
-    if (!response.ok) {
+    if (!response!.ok) {
       throw new Error('Token refresh failed')
     }
-    return await response.json()
-  } catch (error) {
+    return await response!.json()
+  } catch {
     throw new Error('Token refresh failed')
   }
 }

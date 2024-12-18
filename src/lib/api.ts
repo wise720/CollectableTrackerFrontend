@@ -1,18 +1,15 @@
-import type { CollectableList } from './collectableList'
+import type {
+  CollectableList,
+  CollectableListDescriptor,
+  Item,
+} from '../types/collectableList'
 
-import auth from './auth.api'
-import { authHeader } from './utils'
+import auth, { update } from './auth.api'
+import { authFetch } from './utils'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 
 console.log(API_URL)
-
-export interface Game {
-  name: string
-  amount: number
-  total: number
-  public: boolean
-}
 
 async function getAvailabeGames(): Promise<string[]> {
   const data = await fetch(API_URL + '/public/games')
@@ -20,41 +17,29 @@ async function getAvailabeGames(): Promise<string[]> {
   return json.map(e => e.name)
 }
 
-async function getMyGames(): Promise<Game[]> {
-  const data = await fetch(API_URL + '/lists/games', { headers: authHeader() })
-  return data.json()
+async function getMyGames(): Promise<CollectableListDescriptor[]> {
+  const data = await authFetch(API_URL + '/lists/games')
+  return data!.json()
 }
 
 async function addList(game: string) {
-  await fetch(`${API_URL}/lists/${game}/new`, {
+  await authFetch(`${API_URL}/lists/${game}/new`, {
     method: 'POST',
-    headers: authHeader(),
   })
 }
 
 async function setListPublic(game: string, isPublic: boolean) {
-  await fetch(`${API_URL}/lists/${game}/public?${isPublic}`, {
+  await authFetch(`${API_URL}/lists/${game}/public?${isPublic}`, {
     method: 'POST',
-    headers: authHeader(),
   })
 }
 
 async function getList(game: string): Promise<CollectableList> {
-  const data = await fetch(`${API_URL}/lists/${game}`, {
-    headers: authHeader(),
-  })
-  return data.json()
+  const data = await authFetch(`${API_URL}/lists/${game}`)
+  return data!.json()
 }
 
-async function getPublicLists(): Promise<
-  {
-    id: number
-    name: string
-    complete: number
-    total: number
-    username: string
-  }[]
-> {
+async function getPublicLists(): Promise<CollectableListDescriptor[]> {
   const data = await fetch(`${API_URL}/public/lists`)
   return data.json()
 
@@ -65,15 +50,45 @@ async function getListById(
   userid: string,
   id: number,
 ): Promise<CollectableList> {
-  const data = await fetch(`${API_URL}/users/${userid}/list/${id}`, {
-    headers: authHeader(),
-  })
+  const data = await authFetch(`${API_URL}/users/${userid}/list/${id}`)
+  return data!.json()
+}
+
+async function getComments(collectableId: number) {
+  const data = await fetch(`${API_URL}/items/${collectableId}/comments`)
   return data.json()
+}
+
+async function addComment(collectableId: number, comment: string) {
+  await authFetch(`${API_URL}/items/${collectableId}/comments`, {
+    method: 'POST',
+    body: JSON.stringify({ comment }),
+  })
+}
+
+async function getItem(collectableId: number): Promise<Item> {
+  const data = await fetch(`${API_URL}/items/${collectableId}`)
+  return data.json()
+}
+
+async function updateCollectStatus(
+  game: string,
+  itemId: number,
+  collected: boolean,
+): Promise<void> {
+  await authFetch(
+    `${API_URL}/lists/${game}/${itemId}/collect?collected=${collected}`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ collected }),
+    },
+  )
 }
 
 export default {
   auth,
-  lists: { addList, setListPublic, getMyGames, getList },
+  lists: { addList, setListPublic, getMyGames, getList, updateCollectStatus },
   public: { getPublicLists, getAvailabeGames },
+  items: { getComments, addComment, get: getItem },
   getListById,
 }
