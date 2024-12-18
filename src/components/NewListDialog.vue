@@ -25,32 +25,37 @@ import {
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { Check, ChevronsUpDown } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import Label from './ui/label/Label.vue'
 import { useListStore } from '@/stores/list'
-import api, { type Game } from '@/lib/api'
 import router from '@/router'
 
-const myGames = ref<Game[]>([])
-useListStore()
-  .getMyGames()
-  .then(e => (myGames.value = e))
-const games = useListStore().games.filter(
-  game => !(myGames.value ?? []).map(e => e.name).includes(game),
+const noNewGames = defineModel({ default: false })
+
+const listStore = useListStore()
+
+const myGames = listStore.myGames
+
+const games = computed(() =>
+  listStore.games.filter(
+    game => !(myGames ?? []).find(myGame => myGame.game === game),
+  ),
 )
 
-const open = ref(false)
+watchEffect(() => (noNewGames.value = games.value.length === 0))
+
+const isPopoverOpen = ref(false)
 const value = ref('')
 const createList = async () => {
-  await api.lists.addList(value.value)
+  await useListStore().addList(value.value)
   console.log('createList', value.value)
-
+  isPopoverOpen.value = false
+  console.log('createList', isPopoverOpen.value)
   router.push('/list/' + value.value)
-  open.value = false
 }
 </script>
 <template>
-  <Dialog>
+  <Dialog v-model:open="isPopoverOpen">
     <DialogTrigger> New List </DialogTrigger>
     <DialogContent>
       <DialogHeader>
@@ -64,7 +69,6 @@ const createList = async () => {
             <Button
               variant="outline"
               role="combobox"
-              :aria-expanded="open"
               class="w-[200px] justify-between"
             >
               {{
@@ -107,8 +111,8 @@ const createList = async () => {
           </PopoverContent>
         </Popover>
       </div>
-      <DialogFooter
-        ><Button @click="createList"> Create new List</Button>
+      <DialogFooter>
+        <Button @click="createList"> Create new List</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

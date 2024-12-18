@@ -13,7 +13,6 @@ import NewListDialog from './NewListDialog.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useListStore } from '@/stores/list'
 import { ref } from 'vue'
-import type { Game } from '@/lib/api'
 
 const store = useAuthStore()
 store.$subscribe(state => {
@@ -23,9 +22,9 @@ store.$subscribe(state => {
 
 const user = ref(store.user)
 
-const myGames = ref<Game[]>([])
+const noNewGames = ref(false)
+
 const listStore = useListStore()
-listStore.$subscribe(() => (myGames.value = listStore.myGames || []))
 </script>
 
 <template>
@@ -40,19 +39,22 @@ listStore.$subscribe(() => (myGames.value = listStore.myGames || []))
         <NavigationMenuContent>
           <ul>
             <li
-              v-for="c in myGames"
-              :key="c.name"
+              v-for="c in listStore.myGames"
+              :key="c.game"
               style="padding: 1rem; text-wrap: nowrap"
             >
-              <RouterLink :to="'/list/' + c.name"
+              <RouterLink :to="'/list/' + c.game"
                 ><NavigationMenuLink>{{
-                  c.name
+                  c.game
                 }}</NavigationMenuLink></RouterLink
               >
             </li>
-            <li style="padding: 1rem; text-align: left; text-wrap: nowrap">
+            <li
+              v-if="!noNewGames"
+              style="padding: 1rem; text-align: left; text-wrap: nowrap"
+            >
               <NavigationMenuLink>
-                <NewListDialog></NewListDialog>
+                <NewListDialog v-model="noNewGames"></NewListDialog>
               </NavigationMenuLink>
             </li>
           </ul>
