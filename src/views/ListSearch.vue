@@ -13,20 +13,26 @@ import {
 import api from '@/lib/api'
 import type { CollectableListDescriptor } from '@/types/collectableList'
 import router from '@/router'
+import { useRoute } from 'vue-router'
 
-const props = defineProps<{ query: string }>()
+const route = useRoute()
 
-const query = ref(props.query)
-
+const query = ref(route.query.query as string ?? '')
+console.log(`query: ${query.value}`)
 const data = ref<CollectableListDescriptor[]>([]) //getPublicLists(query.value))
 
-api.public.getPublicLists().then(res => {
+api.public.getPublicLists(query.value).then(res => {
   data.value = res
   console.log(res)
 })
 
-watch(query, () => {
-  data.value = [] //getPublicLists(query.value)
+watch(()=> route.query.query, () => {
+    query.value = route.query.query as string ?? ''
+    api.public.getPublicLists(query.value).then(res => {
+    data.value = res
+    console.log(res)
+  })
+
 })
 
 const openList = (userid: string, listId: number) =>

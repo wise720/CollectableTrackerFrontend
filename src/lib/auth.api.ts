@@ -1,5 +1,5 @@
-import type { User } from '@/stores/auth'
-import { authFetch, authHeader } from './utils'
+import type { User } from '@/types/user'
+import { authFetch } from './utils'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 
@@ -28,6 +28,7 @@ export async function login(
     }
   } catch (error) {
     console.error(error)
+    throw new Error('Login failed')
   }
 }
 
@@ -47,7 +48,6 @@ export async function register(
     if (!response.ok) {
       throw new Error('Registration failed')
     }
-    return await response.json()
   } catch {
     throw new Error('Registration failed')
   }

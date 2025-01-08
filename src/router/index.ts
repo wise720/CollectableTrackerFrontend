@@ -40,7 +40,6 @@ const router = createRouter({
       path: '/search',
       name: 'search',
       component: ListSearch,
-      props: route => ({ query: route.query.query }),
     },
     {
       path: '/users/:userId/list/:listId/',

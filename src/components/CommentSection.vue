@@ -24,6 +24,7 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { VisuallyHidden } from 'radix-vue'
 import { useItemStore } from '@/stores/comment'
+import api from '@/lib/api'
 
 useItemStore()
   .getComments(props.collectableId)
@@ -32,22 +33,6 @@ useItemStore()
     data.comments = res
   })
 
-const getComments = async collectableId => {
-  return [
-    {
-      id: 1,
-      user: 'John Doe',
-      comment: 'This is a comment',
-      date: Date.now() - 1000 * 60 * 30,
-    },
-    {
-      id: 2,
-      user: 'Jane Doe',
-      comment: 'This is another comment',
-      date: Date.now() - 1000 * 60 * 60,
-    },
-  ]
-}
 
 const commentSchema = toTypedSchema(
   z.object({
@@ -61,23 +46,21 @@ const form = useForm({
 const addComment = form.handleSubmit(values => {
   console.log(data.comments)
   data.comments?.unshift({
-    id: Date.now(),
-    user: useAuthStore().user?.name || 'Anonymous',
-    comment: values.comment,
-    date: new Date().valueOf(),
+    id: data.comments.length + 1,
+    author: useAuthStore().user?.username || 'Anonymous',
+    message: values.comment,
+    created: Date.now(),
   })
+  api.items.addComment(props.collectableId, values.comment)
   form.resetForm()
 })
 
 const data = reactive<{
   loading: boolean
-  comments?: { id: number; user: string; comment: string; date: number }[]
+  comments?: { id: number; author: string; message: string; created: number }[]
 }>({ loading: true })
 
-getComments(props.itemId, props.game).then(res => {
-  data.loading = false
-  data.comments = res
-})
+
 </script>
 <template>
   <div v-if="!data.loading" style="width: 90%; margin-left: auto">
@@ -88,15 +71,15 @@ getComments(props.itemId, props.game).then(res => {
       style="width: 100%"
     >
       <li
-        v-for="comment in data.comments"
-        :key="comment.id"
+        v-for="(comment, i) in data.comments"
+        :key="i"
         class="rounded-mb shadow"
       >
         <Comment
-          :id="comment.id"
-          :user="comment.user"
-          :comment="comment.comment"
-          :date="comment.date"
+          :id="i"
+          :author	="comment.author	"
+          :message="comment.message"
+          :created="comment.created"
         />
       </li>
     </TransitionGroup>

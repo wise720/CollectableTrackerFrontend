@@ -10,6 +10,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import api from '@/lib/api'
+import router from '@/router'
 
 import { ref } from 'vue'
 
@@ -17,9 +18,10 @@ const username = ref('')
 const password = ref('')
 const email = ref('')
 
-const register = () => {
+const register = async () => {
   console.log('register')
-  api.auth.register(username.value, password.value, email.value)
+  await api.auth.register(username.value, password.value, email.value)
+  router.push('/login')
 }
 </script>
 

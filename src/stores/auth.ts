@@ -9,10 +9,16 @@ import type { User } from '@/types/user'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     // initialize state from local storage to enable user to stay logged in
-    user: JSON.parse(localStorage.getItem('user') ?? 'null') as User | null,
+    user: null as User | null,
     returnUrl: null,
   }),
   actions: {
+    loginFromLocalStorage() {
+      this.user = JSON.parse(localStorage.getItem('user') ?? 'null') as User | null;
+      if (this.user) {
+        useListStore().authInit()
+      }
+    },
     async login(username: string, password: string) {
       const user = await api.auth.login(username, password)
       console.log('login', user)
@@ -32,6 +38,7 @@ export const useAuthStore = defineStore('auth', {
       api.auth.logout()
       this.user = null
       localStorage.removeItem('user')
+      useListStore().reset()
       router.push('/')
     },
     async update(params: {

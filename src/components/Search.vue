@@ -4,7 +4,7 @@ import router from '@/router'
 import { ref } from 'vue'
 const query = ref('')
 const handleSearch = () => {
-  router.push({ name: 'search', query: { query: query.value }, force: true })
+  router.replace({ name: 'search', query: { query: query.value }, force: true })
 }
 </script>
 <template>

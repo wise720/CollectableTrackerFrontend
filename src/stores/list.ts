@@ -42,5 +42,10 @@ export const useListStore = defineStore('tracker', {
       this.readOnlyList = await api.getListById(userid, id)
       return this.readOnlyList
     },
+    reset() {
+      this.myGames = null
+      this.list = null
+      this.readOnlyList = null
+    }
   },
 })

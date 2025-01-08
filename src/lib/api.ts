@@ -29,7 +29,7 @@ async function addList(game: string) {
 }
 
 async function setListPublic(game: string, isPublic: boolean) {
-  await authFetch(`${API_URL}/lists/${game}/public?${isPublic}`, {
+  await authFetch(`${API_URL}/lists/${game}/public?public=${isPublic}`, {
     method: 'POST',
   })
 }
@@ -39,8 +39,8 @@ async function getList(game: string): Promise<CollectableList> {
   return data!.json()
 }
 
-async function getPublicLists(): Promise<CollectableListDescriptor[]> {
-  const data = await fetch(`${API_URL}/public/lists`)
+async function getPublicLists(query:string): Promise<CollectableListDescriptor[]> {
+  const data = await fetch(`${API_URL}/public/lists?query=${query}`)
   return data.json()
 
   //todo: add pagination
@@ -59,10 +59,11 @@ async function getComments(collectableId: number) {
   return data.json()
 }
 
-async function addComment(collectableId: number, comment: string) {
+async function addComment(collectableId: number, message: string) {
   await authFetch(`${API_URL}/items/${collectableId}/comments`, {
     method: 'POST',
-    body: JSON.stringify({ comment }),
+    headers:{"Content-Type": 'application/json',},
+    body:  JSON.stringify(message),
   })
 }
 

@@ -36,13 +36,18 @@ export async function authFetch(url: string, options?: RequestInit) {
     options = {}
   }
   try {
-    return await fetch(url, {
+    const response =  await fetch(url, {
       ...options,
       headers: {
         ...options.headers,
         ...authHeader(),
+        
       },
     })
+    if (!response.ok) {
+      throw new Error('Request failed')
+    }
+    return response
   } catch {
     useAuthStore().logout()
     router.push('/login')

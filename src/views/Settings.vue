@@ -47,7 +47,7 @@ const publish = async (list: CollectableListDescriptor, publish: boolean) => {
           <TableCell>{{ list.game }}</TableCell>
           <TableCell
             ><Checkbox
-              v-model="list.public"
+              :checked="list.public"
               v-on:update:checked="publish(list, $event)"
               label="Public"
             ></Checkbox

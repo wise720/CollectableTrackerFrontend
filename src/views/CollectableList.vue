@@ -43,8 +43,6 @@ import {
 } from '@/components/ui/drawer'
 import WikiItem from '@/components/WikiItem.vue'
 
-console.log('CollectableList.vue')
-
 import { VisuallyHidden } from 'radix-vue'
 
 import { h, ref } from 'vue'
