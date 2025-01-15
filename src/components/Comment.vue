@@ -6,7 +6,6 @@ const props = defineProps<{
   created: number
 }>()
 const formatDate = (created:number) => {
-  console.log(new Date( created))
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'short',

@@ -16,7 +16,6 @@ import { ref } from 'vue'
 
 const store = useAuthStore()
 store.$subscribe(state => {
-  console.log('state', state)
   user.value = store.user
 })
 

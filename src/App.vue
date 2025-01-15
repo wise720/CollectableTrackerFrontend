@@ -26,8 +26,9 @@ import DarkModeSelector from './components/DarkModeSelector.vue'
       align-items: center;
       margin-top: 2rem;
     "
+    class="relative"
   >
-    <div style="margin: auto">
+    <div style="margin: auto" >
       <RouterView />
     </div>
   </div>

@@ -3,6 +3,7 @@ import router from '@/router'
 import api from '@/lib/api'
 import { useListStore } from './list'
 import type { User } from '@/types/user'
+import websocketUpdater from '@/lib/websocketUpdater'
 
 //https://jasonwatmore.com/post/2022/07/25/vue-3-pinia-user-registration-and-login-example-tutorial#users-store-js
 
@@ -17,6 +18,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = JSON.parse(localStorage.getItem('user') ?? 'null') as User | null;
       if (this.user) {
         useListStore().authInit()
+        websocketUpdater.login()
       }
     },
     async login(username: string, password: string) {
@@ -31,6 +33,7 @@ export const useAuthStore = defineStore('auth', {
         // store user details and jwt in local storage to keep user logged in between page refreshes
         localStorage.setItem('user', JSON.stringify(user))
         useListStore().authInit()
+        websocketUpdater.login()
         router.push('/')
       }
     },
@@ -39,6 +42,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       localStorage.removeItem('user')
       useListStore().reset()
+      websocketUpdater.logout()
       router.push('/')
     },
     async update(params: {

@@ -13,9 +13,9 @@ export const useListStore = defineStore('tracker', {
       myGames: ref<CollectableListDescriptor[] | null>(null),
       list: {} as CollectableList | null,
       readOnlyList: {} as CollectableList | null,
+      valid: false,
     }
     api.public.getAvailabeGames().then(games => {
-      console.log('games', games)
       data.games = games
     })
     return data
@@ -23,18 +23,22 @@ export const useListStore = defineStore('tracker', {
   actions: {
     async authInit() {
       this.getMyGames()
+      
     },
     async addList(game: string) {
       await api.lists.addList(game)
       this.getMyGames()
     },
     async getMyGames() {
+      if (this.valid) return this.myGames
       this.myGames = await api.lists.getMyGames()
+      this.valid = true
       return this.myGames
     },
     async getList(game: string) {
-      if (this.list?.game === game) return this.list
+      if (this.valid && this.list?.game === game) return this.list
       this.list = await api.lists.getList(game)
+      this.valid = true
       return this.list
     },
     async getListById(userid: string, id: number) {

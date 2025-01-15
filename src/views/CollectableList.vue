@@ -5,9 +5,8 @@ import { valueUpdater } from '@/lib/utils'
 import type {
   ColumnDef,
   ExpandedState,
-  GlobalFiltersState,
   SortingState,
-  VisibilityState,
+  ColumnFiltersState,
 } from '@tanstack/vue-table'
 
 import {
@@ -50,6 +49,7 @@ import { h, ref } from 'vue'
 import api from '@/lib/api'
 import { useListStore } from '@/stores/list'
 import { type Collectable, type CollectableItem } from '@/types/collectableList'
+import SlideOutShareButton from '@/components/SlideOutShareButton.vue'
 
 const props = defineProps<{
   id: string | null
@@ -65,6 +65,14 @@ if (props.id) {
     .getList(props.id)
     .then(e => (data.value = e.items))
   game.value = props.id
+  useListStore().$subscribe(e => {
+    if (useListStore().valid == false) {
+      useListStore()
+        .getList(props.id)
+        .then(e => (data.value = e.items))
+      game.value = props.id
+    }
+  })
 } else {
   api.getListById(props.userId!, props.listId!).then(e => {
     data.value = e.items
@@ -78,24 +86,25 @@ const updateCollectStatus = (id: number, state: boolean) =>
 
 const columns: ColumnDef<CollectableItem>[] = [
   {
-    accessorKey: 'item',
+    accessorKey: 'item.itemName',
     header: () => h('div', { class: 'text-left' }, 'name'),
     cell: ({ row }) => {
       return h(
         'div',
         { class: 'text-left font-medium' },
-        (row.getValue('item') as Collectable).itemName,
+        row.original.item.itemName,
       )
     },
   },
   {
-    accessorKey: 'tag',
+    accessorKey: 'item.itemType',
+
     header: () => h('div', { class: 'text-left' }, 'tag'),
     cell: ({ row }) => {
       return h(
         'div',
         { class: 'text-left font-medium' },
-        (row.getValue('item') as Collectable).itemType,
+        row.original.item.itemType,
       )
     },
   },
@@ -126,27 +135,29 @@ const columns: ColumnDef<CollectableItem>[] = [
 ]
 
 const sorting = ref<SortingState>([])
-const globalFilter = ref<GlobalFiltersState>([])
-const columnVisibility = ref<VisibilityState>({})
+const columnFilters = ref<ColumnFiltersState>([])
+const globalFilter = ref('')
 const rowSelection = ref({})
-const expanded = ref<ExpandedState>({})
 
 const table = useVueTable({
-  data,
+  get data() {
+    return data.value
+  },
   columns,
   getCoreRowModel: getCoreRowModel(),
   getPaginationRowModel: getPaginationRowModel(),
   getSortedRowModel: getSortedRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
-  getExpandedRowModel: getExpandedRowModel(),
   onSortingChange: updaterOrValue => valueUpdater(updaterOrValue, sorting),
-  onGlobalFilterChange: updaterOrValue =>
-    valueUpdater(updaterOrValue, globalFilter),
-  onColumnVisibilityChange: updaterOrValue =>
-    valueUpdater(updaterOrValue, columnVisibility),
+  onColumnFiltersChange: updaterOrValue => {
+    valueUpdater(updaterOrValue, columnFilters)
+  },
+  onGlobalFilterChange: updaterOrValue => {
+    console.log('onGlobalFilterChange', globalFilter.value)
+    return valueUpdater(updaterOrValue, globalFilter)
+  },
   onRowSelectionChange: updaterOrValue =>
     valueUpdater(updaterOrValue, rowSelection),
-  onExpandedChange: updaterOrValue => valueUpdater(updaterOrValue, expanded),
   state: {
     get sorting() {
       return sorting.value
@@ -154,30 +165,27 @@ const table = useVueTable({
     get globalFilter() {
       return globalFilter.value
     },
-    get columnVisibility() {
-      return columnVisibility.value
-    },
     get rowSelection() {
       return rowSelection.value
-    },
-    get expanded() {
-      return expanded.value
-    },
+    }
   },
 })
-
+window.table = table
 const collectableId = ref(-1)
 const openDrawer = ref(false)
 </script>
 
 <template>
   <div class="w-full" style="width: 80vw">
+    <div class="absolute right-0 top-1/2 transform -translate-y-1/2">
+      <SlideOutShareButton />
+      </div>
     <div class="flex gap-2 items-center py-4">
       <Input
         class="max-w-sm"
         placeholder="name"
         :model-value="globalFilter[0]?.value"
-        @update:model-value="table.setGlobalFilter(String($event))"
+        @update:modelValue="value => (globalFilter = String(value))"
       />
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
@@ -202,57 +210,56 @@ const openDrawer = ref(false)
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-    <div class="rounded-md border">
+    <div class="relative rounded-md border">
       <Table class="w-full">
-        <TableHeader>
+      <TableHeader>
+        <TableRow
+        v-for="headerGroup in table.getHeaderGroups()"
+        :key="headerGroup.id"
+        >
+        <TableHead v-for="header in headerGroup.headers" :key="header.id">
+          <FlexRender
+          v-if="!header.isPlaceholder"
+          :render="header.column.columnDef.header"
+          :props="header.getContext()"
+          />
+        </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <template v-if="table.getRowModel().rows?.length">
+        <template v-for="row in table.getRowModel().rows" :key="row.id">
           <TableRow
-            v-for="headerGroup in table.getHeaderGroups()"
-            :key="headerGroup.id"
+          :data-state="row.getIsSelected() && 'selected'"
+          @click="
+            () => {
+            if (readOnly) return
+            collectableId = row.original.item.collectableId
+            openDrawer = true
+            }
+          "
           >
-            <TableHead v-for="header in headerGroup.headers" :key="header.id">
-              <FlexRender
-                v-if="!header.isPlaceholder"
-                :render="header.column.columnDef.header"
-                :props="header.getContext()"
-              />
-            </TableHead>
+          <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+            <FlexRender
+            :render="cell.column.columnDef.cell"
+            :props="cell.getContext()"
+            />
+          </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          <template v-if="table.getRowModel().rows?.length">
-            <template v-for="row in table.getRowModel().rows" :key="row.id">
-              <TableRow
-                :data-state="row.getIsSelected() && 'selected'"
-                @click="
-                  () => {
-                    if (readOnly) return
-                    collectableId = row.original.item.collectableId
-                    openDrawer = true
-                    console.log('openHelp', openDrawer)
-                  }
-                "
-              >
-                <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-                  <FlexRender
-                    :render="cell.column.columnDef.cell"
-                    :props="cell.getContext()"
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow v-if="row.getIsExpanded()">
-                <TableCell :colspan="row.getAllCells().length">
-                  {{ JSON.stringify(row.original) }}
-                </TableCell>
-              </TableRow>
-            </template>
-          </template>
+          <TableRow v-if="row.getIsExpanded()">
+          <TableCell :colspan="row.getAllCells().length">
+            {{ JSON.stringify(row.original) }}
+          </TableCell>
+          </TableRow>
+        </template>
+        </template>
 
-          <TableRow v-else>
-            <TableCell :colspan="columns.length" class="h-24 text-center">
-              No results.
-            </TableCell>
-          </TableRow>
-        </TableBody>
+        <TableRow v-else>
+        <TableCell :colspan="columns.length" class="h-24 text-center">
+          No results.
+        </TableCell>
+        </TableRow>
+      </TableBody>
       </Table>
     </div>
     <Drawer v-model:open="openDrawer">
@@ -292,5 +299,6 @@ const openDrawer = ref(false)
         </Button>
       </div>
     </div>
+   
   </div>
 </template>

@@ -44,7 +44,6 @@ const form = useForm({
 })
 
 const addComment = form.handleSubmit(values => {
-  console.log(data.comments)
   data.comments?.unshift({
     id: data.comments.length + 1,
     author: useAuthStore().user?.username || 'Anonymous',
